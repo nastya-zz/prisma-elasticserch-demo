@@ -71,3 +71,10 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+## Delete SSL from container
+
+```bash
+$ docker cp /Users/nastya/Documents/GitHub/elastic-db/elasticsearch.yml <container_id>:/usr/share/elasticsearch/config/elasticsearch.yml
+```

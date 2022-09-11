@@ -4,16 +4,9 @@ model Post {
   content   String
   author    User  @relation(fields: [authorId], references: [id])
   authorId  Int
-  categories Category[]
+
+  @@map("post")
 }
-
-model Category {
-  id    Int    @id @default(autoincrement())
-  name  String
-  posts Post[]
-}
-
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -23,12 +16,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator prismaClassGenerator {
+  provider = "prisma-class-generator"
+  output = "./src/_gen/prisma-class/"
+  dryRun = false
+  useSwagger = false
+  makeIndexFile = false
+}
 model User {
   id            Int         @default(autoincrement()) @id
-  email         String      @unique
+  email         String
   name          String
   password      String
 //  address       Address?     @relation(fields: [addressId], references: [id])
 //  addressId     Int?
   posts         Post[]
+
+  @@map("user")
+  @@unique([email, id])
 }

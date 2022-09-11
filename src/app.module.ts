@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { PostService } from './post/post.service';
 import { UserModule } from './user/user.module';
+import { PostModule } from './post/post.module';
+import { PostSearchModule } from './post-search/post-search.module';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -17,11 +19,13 @@ const ENV = process.env.NODE_ENV;
     }),
     PrismaModule,
     UserModule,
+    PostModule,
+    PostSearchModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    PostService,
+    // PostService,
     // PostSearchService
   ],
 })
