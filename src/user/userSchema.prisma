@@ -1,13 +1,30 @@
 
 model User {
-  id            Int         @default(autoincrement()) @id
-  email         String
-  name          String
-  password      String
-//  address       Address?     @relation(fields: [addressId], references: [id])
-//  addressId     Int?
-  posts         Post[]
+    id              Int       @default(autoincrement()) @id
+    email         String      @unique
+    name          String
+    posts         Post[]
+    password      String
 
-  @@map("user")
-  @@unique([email, id])
+    /// @DtoCreateOptional
+    /// @DtoRelationCanConnectOnCreate
+    address       Address?
+
+    @@map("user")
+    @@unique([email, id])
+}
+
+model Address {
+    id              Int         @default(autoincrement()) @id
+    show            Boolean     @default(false)
+    address         String
+    user            User        @relation(fields: [userId], references: [id])
+    userId          Int         @unique
+
+    /// @DtoCreateOptional
+    coordinateX     String?
+    coordinateY     String?
+
+    @@map("address")
+    @@unique([id, userId])
 }

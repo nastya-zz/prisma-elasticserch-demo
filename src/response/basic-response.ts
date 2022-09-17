@@ -32,4 +32,18 @@ export class BasicResponse<T> {
       return new BasicResponse<R>(this.data, this.message, this.success);
     }
   };
+
+  static getSuccess(data, msg) {
+    return new BasicResponse.builder()
+      .setSuccess(true)
+      .setMessage(msg)
+      .setData(data);
+  }
+
+  static getError(msg) {
+    return new BasicResponse.builder()
+      .setSuccess(false)
+      .setMessage(msg)
+      .setData(null);
+  }
 }

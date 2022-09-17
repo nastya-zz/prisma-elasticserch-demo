@@ -1,15 +1,11 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Address } from '../../generated/prisma-class/address';
 
 export class CreateUserDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsNotEmpty()
-  @IsString()
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
+  name: string;
+
   password: string;
+
+  address?: Address;
 }
