@@ -1,36 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserNotFoundException } from '../user/exceptions/user-not-found.exception';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UserNotFoundException } from '../user/exceptions/userNotFound.exception';
-import PostsSearchService from '../post-search/post-search.service';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PostNotFoundException } from './exceptions/postNotFound.exception';
 
 @Injectable()
 export class PostService {
   constructor(
-    private readonly prismaService: PrismaService,
-    private readonly postSearchService: PostsSearchService,
+    private readonly prismaService: PrismaService, // private readonly postSearchService: PostsSearchService,
   ) {}
 
   async createPost(post: CreatePostDto) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        id: post.userId,
+        id: post.authorId,
       },
     });
 
     if (!user) {
-      throw new UserNotFoundException(post.userId);
+      throw new UserNotFoundException(user.id);
     }
 
     const newPost = await this.prismaService.post.create({
       data: {
         title: post.title,
         content: post.content,
-        author: {
-          connect: {
-            id: user.id,
-          },
-        },
+        authorId: post.authorId,
+        show: post.show,
       },
     });
 
@@ -38,5 +35,39 @@ export class PostService {
 
     // console.log(resultIndex);
     return newPost;
+  }
+
+  async getAllPosts() {
+    return this.prismaService.post.findMany();
+  }
+
+  async updatePost(post: UpdatePostDto) {
+    return this.prismaService.post.update({
+      where: {
+        id: post.id,
+      },
+      data: {
+        title: post.title,
+        content: post.content,
+        show: post.show,
+      },
+    });
+  }
+
+  async getPostsByUserId(userId: number) {
+    return this.prismaService.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+  }
+
+  async delete(id: number) {
+    return this.prismaService.post.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
