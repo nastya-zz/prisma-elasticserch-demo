@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { BasicResponse } from '../response/basic-response';
-import { UserNotFoundException } from '../user/exceptions/user-not-found.exception';
+import { UserByIdNotFoundException } from '../user/exceptions/user-by-id-not-found.exception';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
@@ -27,7 +27,7 @@ export class PostController {
       return BasicResponse.getSuccess(savedPost, 'Пост успешно опубликован!');
     } catch (error) {
       let msg = 'При сохранении поста произошла ошибка!';
-      if (error instanceof UserNotFoundException) {
+      if (error instanceof UserByIdNotFoundException) {
         msg = error.message;
       }
 

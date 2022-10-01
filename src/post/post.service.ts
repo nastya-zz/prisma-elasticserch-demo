@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserNotFoundException } from '../user/exceptions/user-not-found.exception';
+import { UserByIdNotFoundException } from '../user/exceptions/user-by-id-not-found.exception';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
@@ -19,7 +19,7 @@ export class PostService {
     });
 
     if (!user) {
-      throw new UserNotFoundException(user.id);
+      throw new UserByIdNotFoundException(user.id);
     }
 
     const newPost = await this.prismaService.post.create({
