@@ -3,12 +3,11 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { BasicResponse } from '../response/basic-response';
@@ -26,7 +25,6 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create')
-  @HttpCode(201)
   async createPost(@Body() post: CreatePostDto) {
     try {
       const savedPost = await this.postService.createPost(post);
@@ -86,7 +84,11 @@ export class PostController {
       await this.postService.delete(postId, user);
       return BasicResponse.getSuccess(postId, 'Пост успешно удален!');
     } catch (error) {
-      return BasicResponse.getError('При удалении поста произошла ошибка!');
+      let msg = 'При удалении поста произошла ошибка!';
+      if (error instanceof PostNotFoundException) {
+        msg = error.message;
+      }
+      return BasicResponse.getError(msg);
     }
   }
 }

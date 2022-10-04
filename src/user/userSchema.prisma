@@ -5,9 +5,6 @@ model User {
     name          String
     posts         Post[]
     password      String
-
-    /// @DtoCreateOptional
-    /// @DtoRelationCanConnectOnCreate
     address       Address?
 
     @@map("user")

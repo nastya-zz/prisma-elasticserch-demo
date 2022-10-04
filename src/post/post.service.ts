@@ -5,6 +5,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from '../generated/prisma-class/user';
 import { Post } from '../generated/prisma-class/post';
+import { PostNotFoundException } from './exceptions/postNotFound.exception';
 
 @Injectable()
 export class PostService {
@@ -68,6 +69,10 @@ export class PostService {
     const post = await this.prismaService.post.findUnique({
       where: { id },
     });
+
+    if (!post) {
+      throw new PostNotFoundException(id);
+    }
 
     if (post.authorId !== user.id) {
       throw new ForbiddenException(
