@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserByIdNotFoundException } from '../user/exceptions/user-by-id-not-found.exception';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PostNotFoundException } from './exceptions/postNotFound.exception';
+import { User } from '../generated/prisma-class/user';
+import { Post } from '../generated/prisma-class/post';
 
 @Injectable()
 export class PostService {
@@ -63,7 +64,17 @@ export class PostService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, user: User) {
+    const post = await this.prismaService.post.findUnique({
+      where: { id },
+    });
+
+    if (post.authorId !== user.id) {
+      throw new ForbiddenException(
+        'Действие запрещено. Данный пользователь не может удалить эту запись!',
+      );
+    }
+
     return this.prismaService.post.delete({
       where: {
         id,

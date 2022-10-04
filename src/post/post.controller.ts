@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { BasicResponse } from '../response/basic-response';
@@ -16,7 +17,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
 import { JwtAuthGuard } from '../guards/jwt.guard';
-import { UserDecorator } from '../decorators/user.decorator';
+import { UserInfo } from '../decorators/user';
 import { User } from '../generated/prisma-class/user';
 
 @Controller('post')
@@ -51,11 +52,10 @@ export class PostController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('list-by-user/:userId')
-  async getPostsByUserId(@Param('userId') userId: string) {
+  async getPostsByUserId(@Param('userId', ParseIntPipe) userId: number) {
     try {
-      const posts = await this.postService.getPostsByUserId(Number(userId));
+      const posts = await this.postService.getPostsByUserId(userId);
       return BasicResponse.getSuccess(posts, 'Посты успешно получены!');
     } catch (error) {
       return BasicResponse.getError(
@@ -78,11 +78,13 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Delete('delete/:id')
-  async delete(@Param('id') id: string, @UserDecorator() user: User) {
+  async delete(
+    @Param('id', ParseIntPipe) postId: number,
+    @UserInfo() user: User,
+  ) {
     try {
-      console.log(user);
-      await this.postService.delete(Number(id));
-      return BasicResponse.getSuccess(id, 'Пост успешно удален!');
+      await this.postService.delete(postId, user);
+      return BasicResponse.getSuccess(postId, 'Пост успешно удален!');
     } catch (error) {
       return BasicResponse.getError('При удалении поста произошла ошибка!');
     }
