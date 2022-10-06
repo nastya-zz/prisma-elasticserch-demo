@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { BasicResponse } from '../response/basic-response';
 import { UserAlreadyExistException } from './exceptions/user-already-exist.exception';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ValidationPipe } from '../pipes/validation.pipe';
 
 @Controller('user')
 export class UserController {
@@ -10,10 +11,16 @@ export class UserController {
 
   @Post('create')
   @HttpCode(201)
-  async create(@Body() user: CreateUserDto) {
+  async create(
+    @Body(new ValidationPipe())
+    user: CreateUserDto,
+  ) {
     try {
       const savedUser = await this.userService.createUser(user);
-      return BasicResponse.getSuccess(savedUser, 'Пост успешно удален!');
+      return BasicResponse.getSuccess(
+        savedUser,
+        'Пользователь успешно создан!',
+      );
     } catch (error) {
       console.log(error);
       const msg =

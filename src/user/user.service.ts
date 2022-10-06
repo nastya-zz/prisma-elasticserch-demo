@@ -20,7 +20,6 @@ export class UserService {
       throw new UserAlreadyExistException(createdUser.email);
     }
 
-    //todo check user exist
     const hashedPassword = await bcrypt.hash(user.password, 10);
 
     return this.prismaService.user.create({

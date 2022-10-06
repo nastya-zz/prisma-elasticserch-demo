@@ -18,6 +18,7 @@ import { PostNotFoundException } from './exceptions/postNotFound.exception';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { UserInfo } from '../decorators/user';
 import { User } from '../generated/prisma-class/user';
+import { ValidationPipe } from '../pipes/validation.pipe';
 
 @Controller('post')
 export class PostController {
@@ -25,7 +26,7 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create')
-  async createPost(@Body() post: CreatePostDto) {
+  async createPost(@Body(new ValidationPipe()) post: CreatePostDto) {
     try {
       const savedPost = await this.postService.createPost(post);
       return BasicResponse.getSuccess(savedPost, 'Пост успешно опубликован!');
@@ -41,7 +42,7 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Put('update')
-  async updatePost(@Body() post: UpdatePostDto) {
+  async updatePost(@Body(new ValidationPipe()) post: UpdatePostDto) {
     try {
       const updatedPost = await this.postService.updatePost(post);
       return BasicResponse.getSuccess(updatedPost, 'Пост успешно обновлен!');
