@@ -8,6 +8,9 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 // import { PostSearchModule } from './post-search/post-search.module';
 import { AuthModule } from './auth/auth.module';
+// import { ChatModule } from './chat/chat.module';
+import { ChatGetaway } from './chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -20,6 +23,7 @@ const ENV = process.env.NODE_ENV;
     UserModule,
     PostModule,
     AuthModule,
+    ChatModule,
     // PostSearchModule,
   ],
   controllers: [AppController],

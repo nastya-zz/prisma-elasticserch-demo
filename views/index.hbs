@@ -1,0 +1,50 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+<div>
+  <ul id="messages"></ul>
+</div>
+
+<div>
+  <input id="message" type="text" />
+  <button onclick="handleSubmitNewMessage()">Submit</button>
+</div>
+
+<script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+        integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+        crossorigin="anonymous"></script>
+  <script>
+    const socket = io("http://localhost:3000")
+
+    const message = document.getElementById('message');
+    const messages = document.getElementById('messages');
+
+    const handleSubmitNewMessage = () => {
+      socket.emit('message',  { message: message.value, authorId: 5, chatId: '8cd0379d-e5eb-4dbd-af9b-5b1f389182db' })
+    }
+
+    socket.on('message', ({ message }) => {
+      handleNewMessage(message);
+    })
+
+    const handleNewMessage = (message) => {
+      messages.appendChild(buildNewMessage(message));
+    }
+
+    const buildNewMessage = (message) => {
+      const li = document.createElement("li");
+      li.appendChild(document.createTextNode(message))
+      return li;
+    }
+
+  </script>
+</body>
+
+
+</html>
