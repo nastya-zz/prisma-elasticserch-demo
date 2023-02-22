@@ -12,4 +12,13 @@ export class User {
 
   @ApiProperty({ type: String })
   password: string;
+
+  @ApiProperty({ type: Date })
+  createdAt: Date;
+
+  @ApiProperty({ type: Date })
+  updatedAt: Date;
+
+  @ApiProperty({ type: Boolean })
+  isActive: boolean = true;
 }

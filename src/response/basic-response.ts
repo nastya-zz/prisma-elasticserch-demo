@@ -9,6 +9,7 @@ export class BasicResponse<T> {
     this.success = success;
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   static builder = class<R> {
     data: R | null = null;

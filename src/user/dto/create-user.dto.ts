@@ -1,11 +1,5 @@
 import { Address } from '../../generated/prisma-class/address';
-import {
-  IsDefined,
-  IsEmail,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator';
+import { IsDefined, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDto {
   @IsDefined()

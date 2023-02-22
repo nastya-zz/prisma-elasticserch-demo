@@ -4,7 +4,6 @@ import { UserByIdNotFoundException } from '../user/exceptions/user-by-id-not-fou
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { User } from '../generated/prisma-class/user';
-import { Post } from '../generated/prisma-class/post';
 import { PostNotFoundException } from './exceptions/postNotFound.exception';
 
 @Injectable()
@@ -21,7 +20,7 @@ export class PostService {
     });
 
     if (!user) {
-      throw new UserByIdNotFoundException(user.id);
+      throw new UserByIdNotFoundException(post.authorId);
     }
 
     const newPost = await this.prismaService.post.create({

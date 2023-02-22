@@ -1,10 +1,4 @@
-import {
-  IsBoolean,
-  IsDefined,
-  IsInt,
-  IsNotEmpty,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsDefined, IsInt, IsString } from 'class-validator';
 
 export class CreatePostDto {
   @IsDefined()
