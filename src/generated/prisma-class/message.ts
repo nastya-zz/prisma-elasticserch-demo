@@ -13,6 +13,9 @@ export class Message {
   @ApiProperty({ type: String })
   chatId: string;
 
+  @ApiProperty({ type: Number })
+  readUserIds: number;
+
   @ApiProperty({ type: Date })
   createdAt: Date;
 

@@ -41,7 +41,7 @@ export class ChatController {
 
   @UseGuards(JwtAuthGuard)
   @Get('list-by-user/:userId')
-  async getPostsByUserId(@Param('userId', ParseIntPipe) userId: number) {
+  async getChatsByUserId(@Param('userId', ParseIntPipe) userId: number) {
     try {
       const posts = await this.chatService.getChatsByUserId(userId);
       return BasicResponse.getSuccess(posts, 'Чаты успешно получены!');

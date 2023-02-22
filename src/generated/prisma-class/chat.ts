@@ -20,5 +20,5 @@ export class Chat {
   public: boolean;
 
   @ApiProperty({ type: Number })
-  guests: number;
+  guestIds: number;
 }

@@ -7,6 +7,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { ReadMessageDto } from './dto/read-message-dto';
 
 @WebSocketGateway()
 export class ChatGetaway {
@@ -22,7 +23,35 @@ export class ChatGetaway {
       await this.prismaService.message.create({
         data: dto,
       });
+      await this.prismaService.chat.update({
+        where: { id: dto.chatId },
+        data: {
+          updatedAt: new Date(),
+        },
+      });
       this.server.emit('message', dto);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  @SubscribeMessage('readMessage')
+  async handleReadMessage(@MessageBody() dto: ReadMessageDto): Promise<void> {
+    console.log('readMessage', dto);
+
+    try {
+      const message = await this.prismaService.message.update({
+        where: {
+          id: dto.messageId,
+        },
+        data: {
+          readUserIds: {
+            push: dto.userId,
+          },
+        },
+      });
+
+      this.server.emit('message', message);
     } catch (err) {
       console.log(err);
     }

@@ -5,6 +5,7 @@ model Message {
   authorId Int
   chat     Chat   @relation(fields: [chatId], references: [id])
   chatId   String
+  readUserIds Int[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -20,7 +21,7 @@ model Chat {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
   public    Boolean   @default(false)
-  guests    Int[]
+  guestIds  Int[]
   Message   Message[]
 
   @@map("chat")

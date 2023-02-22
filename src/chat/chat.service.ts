@@ -12,7 +12,7 @@ export class ChatService {
       const chatForSave = {
         name: '',
         authorId: chat.authorId,
-        guests: [chat.authorId, chat.guestId],
+        guestIds: [chat.authorId, chat.guestId],
       };
 
       return await this.prismaService.chat.create({
@@ -27,7 +27,7 @@ export class ChatService {
   async getChatsByUserId(userId) {
     return this.prismaService.chat.findMany({
       where: {
-        guests: {
+        guestIds: {
           hasSome: [userId],
         },
       },
@@ -41,7 +41,7 @@ export class ChatService {
     try {
       const chatForSave = {
         ...chat,
-        guests: [chat.authorId],
+        guestIds: [chat.authorId],
       };
 
       return await this.prismaService.chat.create({
