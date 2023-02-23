@@ -7,12 +7,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { CreatePrivateChatDto } from './dto/create-private.dto';
 import { BasicResponse } from '../response/basic-response';
 import { CreatePublicChatDto } from './dto/create-public.dto';
 
+@ApiTags('chat')
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}

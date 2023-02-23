@@ -4,7 +4,9 @@ import { BasicResponse } from '../response/basic-response';
 import { UserAlreadyExistException } from './exceptions/user-already-exist.exception';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ValidationPipe } from '../pipes/validation.pipe';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

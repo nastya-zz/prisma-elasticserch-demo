@@ -19,7 +19,9 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
 import { UserInfo } from '../decorators/user';
 import { User } from '../generated/prisma-class/user';
 import { ValidationPipe } from '../pipes/validation.pipe';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}

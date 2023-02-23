@@ -9,7 +9,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReadMessageDto } from './dto/read-message-dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: { origin: true } })
 export class ChatGetaway {
   constructor(private readonly prismaService: PrismaService) {}
 

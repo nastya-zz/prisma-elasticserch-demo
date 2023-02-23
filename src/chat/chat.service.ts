@@ -25,7 +25,7 @@ export class ChatService {
   }
 
   async getChatsByUserId(userId) {
-    return this.prismaService.chat.findMany({
+    const chats = await this.prismaService.chat.findMany({
       where: {
         guestIds: {
           hasSome: [userId],
@@ -33,6 +33,23 @@ export class ChatService {
       },
       orderBy: { updatedAt: 'desc' },
     });
+
+    return Promise.all(
+      chats.map(async (chat) => {
+        if (!chat.public) {
+          const guest = await this.prismaService.user.findUnique({
+            where: {
+              id: chat.guestIds.filter((id) => id !== userId)[0],
+            },
+          });
+
+          chat.name = guest.name;
+          return chat;
+        } else {
+          return chat;
+        }
+      }),
+    );
   }
 
   async createPublicChat(chat: CreatePublicChatDto) {
