@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -51,6 +52,31 @@ export class ChatController {
       return BasicResponse.getError(
         'При получении списка чатов произошла ошибка!',
       );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('list-by-chat/:chatId')
+  async getMessagesByChatId(@Param('chatId') chatId: string) {
+    try {
+      const posts = await this.chatService.getMessagesByChatId(chatId);
+      return BasicResponse.getSuccess(posts, 'Сообщения успешно получены!');
+    } catch (error) {
+      return BasicResponse.getError(
+        'При получении списка Сообщений произошла ошибка!',
+      );
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete/:chatId')
+  async deleteChatById(@Param('chatId') chatId: string) {
+    try {
+      const posts = await this.chatService.deleteChatById(chatId);
+      return BasicResponse.getSuccess(posts, 'Чаты успешно удален!');
+    } catch (error) {
+      console.log(error);
+      return BasicResponse.getError('При удалении чата произошла ошибка!');
     }
   }
 }

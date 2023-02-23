@@ -23,13 +23,15 @@ export class ChatGetaway {
       await this.prismaService.message.create({
         data: dto,
       });
-      await this.prismaService.chat.update({
+      const chat = await this.prismaService.chat.update({
         where: { id: dto.chatId },
         data: {
           updatedAt: new Date(),
         },
       });
+
       this.server.emit('message', dto);
+      this.server.emit('updateChat', chat);
     } catch (err) {
       console.log(err);
     }
@@ -51,7 +53,24 @@ export class ChatGetaway {
         },
       });
 
-      this.server.emit('message', message);
+      this.server.emit('readMessage', message);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  @SubscribeMessage('deleteMessage')
+  async handleDeleteMessage(@MessageBody() id: string): Promise<void> {
+    console.log('deleteMessage', id);
+
+    try {
+      await this.prismaService.message.delete({
+        where: {
+          id,
+        },
+      });
+
+      this.server.emit('deleteMessage', id);
     } catch (err) {
       console.log(err);
     }
