@@ -9,6 +9,7 @@ export class BasicResponse<T> {
     this.success = success;
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   static builder = class<R> {
     data: R | null = null;
@@ -32,4 +33,18 @@ export class BasicResponse<T> {
       return new BasicResponse<R>(this.data, this.message, this.success);
     }
   };
+
+  static getSuccess(data, msg) {
+    return new BasicResponse.builder()
+      .setSuccess(true)
+      .setMessage(msg)
+      .setData(data);
+  }
+
+  static getError(msg) {
+    return new BasicResponse.builder()
+      .setSuccess(false)
+      .setMessage(msg)
+      .setData(null);
+  }
 }

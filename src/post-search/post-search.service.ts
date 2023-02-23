@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { PostSearchResult } from '../post/posts/types/postSearchResult.interface';
-import { PostSearchBody } from '../post/posts/types/postSearchBody.interface';
-import { Post } from '../_gen/prisma-class/post';
+import { PostSearchResult } from './types/postSearchResult.interface';
+import { PostSearchBody } from './types/postSearchBody.interface';
+import { Post } from '../generated/prisma-class/post';
 
 @Injectable()
 export default class PostsSearchService {
@@ -11,6 +11,7 @@ export default class PostsSearchService {
   constructor(private readonly elasticsearchService: ElasticsearchService) {}
 
   async indexPost(post: Post) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     return this.elasticsearchService.index<PostSearchResult, PostSearchBody>({
       index: this.index,
@@ -23,19 +24,19 @@ export default class PostsSearchService {
     });
   }
 
-  async search(text: string) {
-    // const body = await this.elasticsearchService.search<PostSearchResult>({
-    //   index: this.index,
-    //   body: {
-    //     query: {
-    //       multi_match: {
-    //         query: text,
-    //         fields: ['title', 'content'],
-    //       },
-    //     },
-    //   },
-    // });
-    // const hits = body?.body.hits.hits;
-    // return hits.map((item) => item._source);
-  }
+  // async search(text: string) {
+  // const body = await this.elasticsearchService.search<PostSearchResult>({
+  //   index: this.index,
+  //   body: {
+  //     query: {
+  //       multi_match: {
+  //         query: text,
+  //         fields: ['title', 'content'],
+  //       },
+  //     },
+  //   },
+  // });
+  // const hits = body?.body.hits.hits;
+  // return hits.map((item) => item._source);
+  // }
 }

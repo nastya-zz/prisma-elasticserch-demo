@@ -1,9 +1,42 @@
+model Message {
+  id       String @id @default(uuid())
+  message  String
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId Int
+  chat     Chat   @relation(fields: [chatId], references: [id])
+  chatId   String
+  readUserIds Int[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("message")
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  name      String
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  public    Boolean   @default(false)
+  guestIds  Int[]
+  Message   Message[]
+
+  @@map("chat")
+}
+
 model Post {
   id        Int      @default(autoincrement()) @id
   title     String
   content   String
+  show      Boolean
   author    User  @relation(fields: [authorId], references: [id])
   authorId  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   @@map("post")
 }
@@ -15,23 +48,42 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
 generator prismaClassGenerator {
-  provider = "prisma-class-generator"
-  output = "./src/_gen/prisma-class/"
-  dryRun = false
-  useSwagger = false
-  makeIndexFile = false
+    provider = "prisma-class-generator"
+    dryRun = false
+    output = "./src/generated/prisma-class"
+    useSwagger = true
+    makeIndexFile = false
+    seperateRelationFields = true
 }
 model User {
-  id            Int         @default(autoincrement()) @id
-  email         String
-  name          String
-  password      String
-//  address       Address?     @relation(fields: [addressId], references: [id])
-//  addressId     Int?
-  posts         Post[]
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  posts     Post[]
+  chats     Chat[]
+  password  String
+  address   Address?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  isActive  Boolean   @default(true)
+  Message   Message[]
 
-  @@map("user")
   @@unique([email, id])
+  @@map("user")
+}
+
+model Address {
+    id              Int         @default(autoincrement()) @id
+    show            Boolean     @default(false)
+    address         String
+    user            User        @relation(fields: [userId], references: [id])
+    userId          Int         @unique
+
+    /// @DtoCreateOptional
+    coordinateX     String?
+    coordinateY     String?
+
+    @@map("address")
+    @@unique([id, userId])
 }

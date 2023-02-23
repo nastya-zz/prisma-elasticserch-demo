@@ -1,36 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserByIdNotFoundException } from '../user/exceptions/user-by-id-not-found.exception';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UserNotFoundException } from '../user/exceptions/userNotFound.exception';
-import PostsSearchService from '../post-search/post-search.service';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { User } from '../generated/prisma-class/user';
+import { PostNotFoundException } from './exceptions/postNotFound.exception';
 
 @Injectable()
 export class PostService {
   constructor(
-    private readonly prismaService: PrismaService,
-    private readonly postSearchService: PostsSearchService,
+    private readonly prismaService: PrismaService, // private readonly postSearchService: PostsSearchService,
   ) {}
 
   async createPost(post: CreatePostDto) {
     const user = await this.prismaService.user.findUnique({
       where: {
-        id: post.userId,
+        id: post.authorId,
       },
     });
 
     if (!user) {
-      throw new UserNotFoundException(post.userId);
+      throw new UserByIdNotFoundException(post.authorId);
     }
 
     const newPost = await this.prismaService.post.create({
       data: {
         title: post.title,
         content: post.content,
-        author: {
-          connect: {
-            id: user.id,
-          },
-        },
+        authorId: post.authorId,
+        show: post.show,
       },
     });
 
@@ -38,5 +36,53 @@ export class PostService {
 
     // console.log(resultIndex);
     return newPost;
+  }
+
+  async getAllPosts() {
+    return this.prismaService.post.findMany();
+  }
+
+  async updatePost(post: UpdatePostDto) {
+    return this.prismaService.post.update({
+      where: {
+        id: post.id,
+      },
+      data: {
+        title: post.title,
+        content: post.content,
+        show: post.show,
+      },
+    });
+  }
+
+  async getPostsByUserId(userId: number) {
+    return this.prismaService.post.findMany({
+      where: {
+        authorId: userId,
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+  }
+
+  async delete(id: number, user: User) {
+    const post = await this.prismaService.post.findUnique({
+      where: { id },
+    });
+
+    if (!post) {
+      throw new PostNotFoundException(id);
+    }
+
+    if (post.authorId !== user.id) {
+      throw new ForbiddenException(
+        'Действие запрещено. Данный пользователь не может удалить эту запись!',
+      );
+    }
+
+    return this.prismaService.post.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

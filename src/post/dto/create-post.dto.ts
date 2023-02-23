@@ -1,15 +1,19 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDefined, IsInt, IsString } from 'class-validator';
 
 export class CreatePostDto {
+  @IsDefined()
   @IsString()
-  @IsNotEmpty()
   title: string;
 
+  @IsDefined()
   @IsString()
-  @IsNotEmpty()
   content: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  userId: number;
+  @IsDefined()
+  @IsBoolean()
+  show: boolean;
+
+  @IsDefined()
+  @IsInt()
+  authorId: number;
 }

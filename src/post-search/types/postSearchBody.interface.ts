@@ -4,4 +4,3 @@ export interface PostSearchBody {
   content: string;
   authorId: number;
 }
-

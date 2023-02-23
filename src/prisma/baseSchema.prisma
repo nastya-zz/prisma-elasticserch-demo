@@ -7,11 +7,11 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
-
 generator prismaClassGenerator {
-  provider = "prisma-class-generator"
-  output = "./src/_gen/prisma-class/"
-  dryRun = false
-  useSwagger = false
-  makeIndexFile = false
+    provider = "prisma-class-generator"
+    dryRun = false
+    output = "./src/generated/prisma-class"
+    useSwagger = true
+    makeIndexFile = false
+    seperateRelationFields = true
 }
