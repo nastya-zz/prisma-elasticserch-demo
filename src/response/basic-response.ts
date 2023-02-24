@@ -9,8 +9,6 @@ export class BasicResponse<T> {
     this.success = success;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   static builder = class<R> {
     data: R | null = null;
     message: string | null = null;
@@ -34,14 +32,14 @@ export class BasicResponse<T> {
     }
   };
 
-  static getSuccess(data, msg) {
+  static getSuccess(data, msg): BasicResponse<any> {
     return new BasicResponse.builder()
       .setSuccess(true)
       .setMessage(msg)
       .setData(data);
   }
 
-  static getError(msg) {
+  static getError(msg): BasicResponse<any> {
     return new BasicResponse.builder()
       .setSuccess(false)
       .setMessage(msg)

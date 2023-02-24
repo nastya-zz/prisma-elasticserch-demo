@@ -4,10 +4,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReadMessageDto } from './dto/read-message-dto';
+import { UseGuards } from '@nestjs/common';
+import { SocketAuthGuard } from '../guards/socket.guard';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class ChatGetaway {
@@ -16,6 +18,7 @@ export class ChatGetaway {
   @WebSocketServer()
   server: Server;
 
+  @UseGuards(SocketAuthGuard)
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() dto: CreateMessageDto): Promise<void> {
     console.log('message', dto);
@@ -37,6 +40,7 @@ export class ChatGetaway {
     }
   }
 
+  @UseGuards(SocketAuthGuard)
   @SubscribeMessage('readMessage')
   async handleReadMessage(@MessageBody() dto: ReadMessageDto): Promise<void> {
     console.log('readMessage', dto);
@@ -59,6 +63,7 @@ export class ChatGetaway {
     }
   }
 
+  @UseGuards(SocketAuthGuard)
   @SubscribeMessage('deleteMessage')
   async handleDeleteMessage(@MessageBody() id: string): Promise<void> {
     console.log('deleteMessage', id);
