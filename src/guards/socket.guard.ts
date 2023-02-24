@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { ConfigService } from '@nestjs/config';
@@ -6,7 +11,7 @@ import { getJWTConfig } from '../configs/jwt.config';
 
 @Injectable()
 export class SocketAuthGuard implements CanActivate {
-  // private readonly logger = new Logger(SocketAuthGuard.name);
+  private readonly logger = new Logger(SocketAuthGuard.name);
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -17,9 +22,10 @@ export class SocketAuthGuard implements CanActivate {
 
     // for testing support, fallback to token header
     const token = socket.handshake.headers['authorization'];
+    // this.logger.log('token', token);
 
     if (!token) {
-      // this.logger.error('No authorization token provided');
+      this.logger.error('No authorization token provided');
 
       throw new WsUnauthorizedException('No token provided');
     }
@@ -27,7 +33,7 @@ export class SocketAuthGuard implements CanActivate {
     try {
       const secret = await getJWTConfig(this.configService);
       const payload = this.jwtService.verify(token.split(' ')[1], secret);
-      console.log('payload', payload);
+      // this.logger.log('payload', payload);
 
       // this.logger.debug(`Validating admin using token payload`, payload);
       //

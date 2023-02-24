@@ -8,11 +8,13 @@ import { Server, Socket } from 'socket.io';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReadMessageDto } from './dto/read-message-dto';
-import { UseGuards } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { SocketAuthGuard } from '../guards/socket.guard';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class ChatGetaway {
+  private readonly logger = new Logger(ChatGetaway.name);
+
   constructor(private readonly prismaService: PrismaService) {}
 
   @WebSocketServer()
@@ -21,9 +23,9 @@ export class ChatGetaway {
   @UseGuards(SocketAuthGuard)
   @SubscribeMessage('message')
   async handleMessage(@MessageBody() dto: CreateMessageDto): Promise<void> {
-    console.log('message', dto);
+    this.logger.log('message', dto);
     try {
-      await this.prismaService.message.create({
+      const savedMessage = await this.prismaService.message.create({
         data: dto,
       });
       const chat = await this.prismaService.chat.update({
@@ -33,17 +35,17 @@ export class ChatGetaway {
         },
       });
 
-      this.server.emit('message', dto);
+      this.server.emit('message', savedMessage);
       this.server.emit('updateChat', chat);
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
     }
   }
 
   @UseGuards(SocketAuthGuard)
   @SubscribeMessage('readMessage')
   async handleReadMessage(@MessageBody() dto: ReadMessageDto): Promise<void> {
-    console.log('readMessage', dto);
+    this.logger.log('readMessage', dto);
 
     try {
       const message = await this.prismaService.message.update({
@@ -59,40 +61,42 @@ export class ChatGetaway {
 
       this.server.emit('readMessage', message);
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
+      throw err;
     }
   }
 
   @UseGuards(SocketAuthGuard)
   @SubscribeMessage('deleteMessage')
   async handleDeleteMessage(@MessageBody() id: string): Promise<void> {
-    console.log('deleteMessage', id);
+    this.logger.log('deleteMessage', id);
 
     try {
-      await this.prismaService.message.delete({
+      const deletedMessage = await this.prismaService.message.delete({
         where: {
           id,
         },
       });
 
-      this.server.emit('deleteMessage', id);
+      this.logger.log('deletedMessage', deletedMessage);
+      this.server.emit('deletedMessage', deletedMessage);
     } catch (err) {
-      console.log(err);
+      this.logger.error(err);
     }
   }
 
   afterInit() {
-    console.log('socket start');
+    this.logger.log('socket start');
     //Выполняем действия
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Disconnected: ${client.id}`);
+    this.logger.log(`Disconnected: ${client.id}`);
     //Выполняем действия
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    console.log(`Connected ${client.id}`);
+    this.logger.log(`Connected ${client.id}`);
     //Выполняем действия
   }
 }
