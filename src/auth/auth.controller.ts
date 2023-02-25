@@ -1,7 +1,8 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto/auth.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthorizedUserDto } from './dto/authorized-user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -10,7 +11,14 @@ export class AuthController {
 
   @HttpCode(200)
   @Post('login')
-  async login(@Body() { email, password }: AuthDto) {
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User authorized',
+    type: AuthorizedUserDto,
+  })
+  async login(
+    @Body() { email, password }: AuthDto,
+  ): Promise<AuthorizedUserDto> {
     const user = await this.authService.validateUser(email, password);
     return this.authService.login(user);
   }

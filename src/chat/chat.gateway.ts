@@ -10,6 +10,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ReadMessageDto } from './dto/read-message-dto';
 import { Logger, UseGuards } from '@nestjs/common';
 import { SocketAuthGuard } from '../guards/socket.guard';
+import { UserSocketInfo } from '../decorators/user';
+import { User } from '../generated/prisma-class/user';
+import { Message } from '../generated/prisma-class/message';
 
 @WebSocketGateway({ cors: { origin: true } })
 export class ChatGetaway {
@@ -68,18 +71,36 @@ export class ChatGetaway {
 
   @UseGuards(SocketAuthGuard)
   @SubscribeMessage('deleteMessage')
-  async handleDeleteMessage(@MessageBody() id: string): Promise<void> {
-    this.logger.log('deleteMessage', id);
+  async handleDeleteMessage(
+    @MessageBody() dto: Message,
+    @UserSocketInfo() user: User | null,
+  ): Promise<void> {
+    this.logger.log('deleteMessage', dto);
+    this.logger.log('deleteMessage user', user);
 
     try {
-      const deletedMessage = await this.prismaService.message.delete({
+      if (!user) {
+        throw new Error('Пользователь не найден');
+      }
+      const chat = await this.prismaService.chat.findUnique({
         where: {
-          id,
+          id: dto.chatId,
         },
       });
+      const canDelete = chat.public
+        ? user.id === dto.authorId || user.id === chat.authorId
+        : user.id === dto.authorId;
 
-      this.logger.log('deletedMessage', deletedMessage);
-      this.server.emit('deletedMessage', deletedMessage);
+      if (canDelete) {
+        const deletedMessage = await this.prismaService.message.delete({
+          where: {
+            id: dto.id,
+          },
+        });
+
+        this.logger.log('deletedMessage', deletedMessage);
+        this.server.emit('deletedMessage', deletedMessage);
+      }
     } catch (err) {
       this.logger.error(err);
     }

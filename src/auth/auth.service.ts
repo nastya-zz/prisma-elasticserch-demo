@@ -20,6 +20,8 @@ export class AuthService {
     };
 
     return {
+      ...user,
+      password: null,
       access_token: await this.jwtService.signAsync(payload),
     };
   }
