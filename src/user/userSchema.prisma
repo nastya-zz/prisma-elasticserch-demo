@@ -11,6 +11,7 @@ model User {
   updatedAt DateTime  @default(now()) @updatedAt
   isActive  Boolean   @default(true)
   Message   Message[]
+  advertisements Advertisement[]
 
   @@unique([email, id])
   @@map("user")

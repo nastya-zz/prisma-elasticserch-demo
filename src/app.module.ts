@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 // import { ChatModule } from './chat/chat.module';
 import { ChatGetaway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
+import { AdvertisementModule } from './advertisement/advertisement.module';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -24,6 +25,7 @@ const ENV = process.env.NODE_ENV;
     PostModule,
     AuthModule,
     ChatModule,
+    AdvertisementModule,
     // PostSearchModule,
   ],
   controllers: [AppController],

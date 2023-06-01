@@ -1,0 +1,52 @@
+model Advertisement {
+  id        String    @id @default(autoincrement())
+  title     String
+  description String
+  isNew     Boolean   @default(false)
+  //category todo field
+
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+
+  isArchive Boolean   @default(false)
+  isActive  Boolean   @default(true)
+  canCall   Boolean   @default(true)
+  canMessage Boolean  @default(true)
+  address   Address
+  chats     AdvertisementChat[]
+
+  views     Int
+  uniqueWatchers Int[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+
+  @@map("advertisement")
+}
+
+model AdvertisementMessage {
+  id       String @id @default(uuid())
+  message  String
+  user     User   @relation(fields: [usreId], references: [id])
+  usreId   Int
+  chat     AdvertisementChat   @relation(fields: [chatId], references: [id])
+  chatId   String
+  readUserIds Int[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("advertisement_message")
+}
+
+model AdvertisementChat {
+  id        String    @id @default(uuid())
+  name      String
+  author    Advertisement      @relation(fields: [advertisementId], references: [id])
+  advertisementId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  message   Message[]
+
+  @@map("advertisement_chat")
+}
