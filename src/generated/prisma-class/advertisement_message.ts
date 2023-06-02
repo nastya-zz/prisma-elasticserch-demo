@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class Message {
+export class AdvertisementMessage {
   @ApiProperty({ type: String })
   id: string;
 
@@ -8,10 +8,10 @@ export class Message {
   message: string;
 
   @ApiProperty({ type: Number })
-  authorId: number;
+  usreId: number;
 
-  @ApiPropertyOptional({ type: String })
-  advertisementChatId?: string;
+  @ApiProperty({ type: String })
+  chatId: string;
 
   @ApiProperty({ type: Number })
   readUserIds: number;
@@ -21,7 +21,4 @@ export class Message {
 
   @ApiProperty({ type: Date })
   updatedAt: Date;
-
-  @ApiPropertyOptional({ type: String })
-  chatId?: string;
 }

@@ -1,14 +1,18 @@
 model Message {
-  id       String @id @default(uuid())
-  message  String
-  author   User   @relation(fields: [authorId], references: [id])
-  authorId Int
-  chat     Chat   @relation(fields: [chatId], references: [id])
-  chatId   String
+  id                  String             @id @default(uuid())
+  message             String
+  author              User               @relation(fields: [authorId], references: [id])
+  authorId            Int
+  advertisementChat   AdvertisementChat? @relation(fields: [advertisementChatId], references: [id])
+  advertisementChatId String?
+
   readUserIds Int[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @default(now()) @updatedAt
+  Chat          Chat?           @relation(fields: [chatId], references: [id])
+  chatId        String?
+  Advertisement Advertisement[]
 
   @@map("message")
 }

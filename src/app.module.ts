@@ -9,7 +9,6 @@ import { PostModule } from './post/post.module';
 // import { PostSearchModule } from './post-search/post-search.module';
 import { AuthModule } from './auth/auth.module';
 // import { ChatModule } from './chat/chat.module';
-import { ChatGetaway } from './chat/chat.gateway';
 import { ChatModule } from './chat/chat.module';
 import { AdvertisementModule } from './advertisement/advertisement.module';
 

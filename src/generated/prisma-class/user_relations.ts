@@ -1,8 +1,10 @@
 import { Post } from './post';
 import { Chat } from './chat';
-import { Address } from './address';
+import { Advertisement } from './advertisement';
+import { AdvertisementChat } from './advertisement_chat';
+import { AdvertisementMessage } from './advertisement_message';
 import { Message } from './message';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UserRelations {
   @ApiProperty({ isArray: true, type: () => Post })
@@ -11,8 +13,14 @@ export class UserRelations {
   @ApiProperty({ isArray: true, type: () => Chat })
   chats: Chat[];
 
-  @ApiPropertyOptional({ type: () => Address })
-  address?: Address;
+  @ApiProperty({ isArray: true, type: () => Advertisement })
+  advertisements: Advertisement[];
+
+  @ApiProperty({ isArray: true, type: () => AdvertisementChat })
+  advertisementChats: AdvertisementChat[];
+
+  @ApiProperty({ isArray: true, type: () => AdvertisementMessage })
+  advertisementMessages: AdvertisementMessage[];
 
   @ApiProperty({ isArray: true, type: () => Message })
   Message: Message[];

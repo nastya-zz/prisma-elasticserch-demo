@@ -1,36 +1,42 @@
 model Advertisement {
-  id        String    @id @default(autoincrement())
-  title     String
+  id          Int     @id @default(autoincrement())
+  title       String
   description String
-  isNew     Boolean   @default(false)
+  images      String[]
+  isNew       Boolean @default(false)
   //category todo field
 
-  user      User      @relation(fields: [userId], references: [id])
-  userId    Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 
-  isArchive Boolean   @default(false)
-  isActive  Boolean   @default(true)
-  canCall   Boolean   @default(true)
-  canMessage Boolean  @default(true)
-  address   Address
-  chats     AdvertisementChat[]
+  isArchive  Boolean             @default(false)
+  isActive   Boolean             @default(true)
+  canCall    Boolean             @default(true)
+  canMessage Boolean             @default(true)
+  chats      AdvertisementChat[]
 
-  views     Int
+  views          Int
   uniqueWatchers Int[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
+  coordinateX String
+  coordinateY String
+  address     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Message   Message? @relation(fields: [messageId], references: [id])
+  messageId String?
 
   @@map("advertisement")
 }
 
 model AdvertisementMessage {
-  id       String @id @default(uuid())
-  message  String
-  user     User   @relation(fields: [usreId], references: [id])
-  usreId   Int
-  chat     AdvertisementChat   @relation(fields: [chatId], references: [id])
-  chatId   String
+  id          String            @id @default(uuid())
+  message     String
+  user        User              @relation(fields: [usreId], references: [id])
+  usreId      Int
+  chat        AdvertisementChat @relation(fields: [chatId], references: [id])
+  chatId      String
   readUserIds Int[]
 
   createdAt DateTime @default(now())
@@ -40,13 +46,16 @@ model AdvertisementMessage {
 }
 
 model AdvertisementChat {
-  id        String    @id @default(uuid())
-  name      String
-  author    Advertisement      @relation(fields: [advertisementId], references: [id])
-  advertisementId  Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  message   Message[]
+  id                   String                 @id @default(uuid())
+  name                 String
+  advertisement        Advertisement          @relation(fields: [advertisementId], references: [id])
+  advertisementId      Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @default(now()) @updatedAt
+  messages             Message[]
+  AdvertisementMessage AdvertisementMessage[]
+  User                 User?                  @relation(fields: [userId], references: [id])
+  userId               Int?
 
   @@map("advertisement_chat")
 }

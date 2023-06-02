@@ -25,7 +25,7 @@ export class SocketAuthGuard implements CanActivate {
     // this.logger.log('token', token);
 
     if (!token) {
-      this.logger.error('No authorization token provided');
+      this.logger.error('No auth token provided');
 
       throw new WsUnauthorizedException('No token provided');
     }
