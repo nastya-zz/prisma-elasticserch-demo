@@ -14,7 +14,6 @@ import { ChatService } from './chat.service';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { CreatePrivateChatDto } from './dto/create-private.dto';
 import { BasicResponse } from '../response/basic-response';
-import { CreatePublicChatDto } from './dto/create-public.dto';
 import { Chat } from '../generated/prisma-class/chat';
 import { Message } from '../generated/prisma-class/message';
 
@@ -34,16 +33,16 @@ export class ChatController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('create-public')
-  async createPublicChat(@Body() dto: CreatePublicChatDto) {
-    try {
-      const createdChat = await this.chatService.createPublicChat(dto);
-      return BasicResponse.getSuccess(createdChat, 'Чат успешно создан!');
-    } catch (err) {
-      return BasicResponse.getError('При создании чата произошла ошибка!');
-    }
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post('create-public')
+  // async createPublicChat(@Body() dto: CreatePublicChatDto) {
+  //   try {
+  //     const createdChat = await this.chatService.createPublicChat(dto);
+  //     return BasicResponse.getSuccess(createdChat, 'Чат успешно создан!');
+  //   } catch (err) {
+  //     return BasicResponse.getError('При создании чата произошла ошибка!');
+  //   }
+  // }
 
   @ApiResponse({
     status: HttpStatus.OK,

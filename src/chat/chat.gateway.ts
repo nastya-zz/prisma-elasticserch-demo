@@ -88,7 +88,7 @@ export class ChatGetaway {
         },
       });
       const canDelete = chat.public
-        ? user.id === dto.authorId || user.id === chat.authorId
+        ? user.id === dto.authorId || user.id === chat.buyerId
         : user.id === dto.authorId;
 
       if (canDelete) {
@@ -107,7 +107,7 @@ export class ChatGetaway {
   }
 
   afterInit() {
-    this.logger.log('socket start');
+    this.logger.log('socket start', this.server.path());
     //Выполняем действия
   }
 

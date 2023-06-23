@@ -1,8 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePrivateChatDto } from './dto/create-private.dto';
-import { CreatePublicChatDto } from './dto/create-public.dto';
-import { PrivateChatNotFoundException } from './exceptions/private-chat-not-found.exception';
 import { ChatNotAcceptableException } from './exceptions/chat-create.exception';
 
 @Injectable()
@@ -11,10 +9,13 @@ export class ChatService {
 
   async createPrivateChat(chat: CreatePrivateChatDto) {
     try {
+      const authorAdvertisement = await this.getUserByAdvertisementId(
+        chat.advertisementId,
+      );
       const chatForSave = {
-        name: '',
-        authorId: chat.authorId,
-        guestIds: [chat.authorId, chat.guestId],
+        sellerId: authorAdvertisement.id,
+        buyerId: chat.buyerId,
+        advertisementId: chat.advertisementId,
       };
 
       return await this.prismaService.chat.create({
@@ -27,11 +28,16 @@ export class ChatService {
   }
 
   async getChatsByUserId(userId) {
-    const chats = await this.prismaService.chat.findMany({
+    let chats = await this.prismaService.chat.findMany({
       where: {
-        guestIds: {
-          hasSome: [userId],
-        },
+        OR: [
+          {
+            buyerId: userId,
+          },
+          {
+            sellerId: userId,
+          },
+        ],
       },
       orderBy: { updatedAt: 'desc' },
     });
@@ -40,28 +46,26 @@ export class ChatService {
       return [];
     }
 
-    return Promise.all(
+    chats = await Promise.all(
       chats.map(async (chat) => {
-        if (!chat.public) {
-          const guestId =
-            chat.guestIds.filter((id) => id !== userId)?.[0] || null;
+        const searchId = userId === chat.buyerId ? chat.sellerId : chat.buyerId;
+        const chatName = await this.prismaService.user.findUnique({
+          where: {
+            id: searchId,
+          },
+          select: {
+            name: true,
+          },
+        });
 
-          if (!guestId) {
-            throw new PrivateChatNotFoundException(chat.id);
-          }
-          const guest = await this.prismaService.user.findUnique({
-            where: {
-              id: guestId,
-            },
-          });
-
-          chat.name = guest.name;
-          return chat;
-        } else {
-          return chat;
-        }
+        return {
+          ...chat,
+          ...chatName,
+        };
       }),
     );
+
+    return chats;
   }
 
   async getMessagesByChatId(chatId: string) {
@@ -76,21 +80,21 @@ export class ChatService {
     return messages;
   }
 
-  async createPublicChat(chat: CreatePublicChatDto) {
-    try {
-      const chatForSave = {
-        ...chat,
-        guestIds: [chat.authorId],
-      };
-
-      return await this.prismaService.chat.create({
-        data: chatForSave,
-      });
-    } catch (err) {
-      console.log(err);
-      throw new ChatNotAcceptableException();
-    }
-  }
+  // async createPublicChat(chat: CreatePublicChatDto) {
+  //   try {
+  //     const chatForSave = {
+  //       ...chat,
+  //       guestIds: [chat.authorId],
+  //     };
+  //
+  //     return await this.prismaService.chat.create({
+  //       data: chatForSave,
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw new ChatNotAcceptableException();
+  //   }
+  // }
 
   async deleteChatById(chatId: string) {
     const deleteMessages = this.prismaService.message.deleteMany({
@@ -106,5 +110,23 @@ export class ChatService {
     });
 
     return this.prismaService.$transaction([deleteMessages, deleteChat]);
+  }
+
+  async getUserByAdvertisementId(advertisementId: number) {
+    try {
+      const advertisement = await this.prismaService.advertisement.findUnique({
+        where: {
+          id: advertisementId,
+        },
+      });
+
+      return await this.prismaService.user.findUnique({
+        where: {
+          id: advertisement.userId,
+        },
+      });
+    } catch (err: unknown) {
+      //todo catch error
+    }
   }
 }

@@ -10,9 +10,6 @@ export class Message {
   @ApiProperty({ type: Number })
   authorId: number;
 
-  @ApiPropertyOptional({ type: String })
-  advertisementChatId?: string;
-
   @ApiProperty({ type: Number })
   readUserIds: number;
 

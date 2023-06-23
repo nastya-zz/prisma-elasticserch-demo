@@ -1,5 +1,5 @@
 import { User } from './user';
-import { AdvertisementChat } from './advertisement_chat';
+import { Chat } from './chat';
 import { Message } from './message';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -7,8 +7,8 @@ export class AdvertisementRelations {
   @ApiProperty({ type: () => User })
   user: User;
 
-  @ApiProperty({ isArray: true, type: () => AdvertisementChat })
-  chats: AdvertisementChat[];
+  @ApiProperty({ isArray: true, type: () => Chat })
+  chats: Chat[];
 
   @ApiPropertyOptional({ type: () => Message })
   Message?: Message;

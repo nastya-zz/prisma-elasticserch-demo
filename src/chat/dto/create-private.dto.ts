@@ -5,7 +5,12 @@ export class CreatePrivateChatDto {
   @ApiProperty({ type: Number })
   @IsDefined()
   @IsInt()
-  authorId: number;
+  buyerId: number;
+
+  @ApiProperty({ type: Number })
+  @IsDefined()
+  @IsInt()
+  sellerId: number;
 
   @ApiProperty({ type: Boolean })
   @IsDefined()
@@ -15,5 +20,5 @@ export class CreatePrivateChatDto {
   @ApiProperty({ type: Number })
   @IsDefined()
   @IsInt()
-  guestId: number;
+  advertisementId: number;
 }

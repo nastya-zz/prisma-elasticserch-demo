@@ -4,11 +4,11 @@ export class Chat {
   @ApiProperty({ type: String })
   id: string;
 
-  @ApiProperty({ type: String })
-  name: string;
+  @ApiProperty({ type: Number })
+  buyerId: number;
 
   @ApiProperty({ type: Number })
-  authorId: number;
+  sellerId: number;
 
   @ApiProperty({ type: Date })
   createdAt: Date;
@@ -20,5 +20,5 @@ export class Chat {
   public: boolean;
 
   @ApiProperty({ type: Number })
-  guestIds: number;
+  advertisementId: number;
 }

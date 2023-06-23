@@ -4,15 +4,13 @@ model User {
   email                 String                 @unique
   name                  String
   posts                 Post[]
-  chats                 Chat[]
   password              String
 //  address               Address?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @default(now()) @updatedAt
   isActive              Boolean                @default(true)
   advertisements        Advertisement[]
-  advertisementChats    AdvertisementChat[]
-  advertisementMessages AdvertisementMessage[]
+  chats                 Chat[]
   Message               Message[]
 
   @@unique([email, id])
